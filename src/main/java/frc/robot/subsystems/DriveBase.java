@@ -24,7 +24,7 @@ public class DriveBase extends SubsystemBase {
   public DriveBase() {
   }
 
-  /** 
+  
   private double calculateAngle(double x, double y) {
     double angle = Math.atan2(y, x);
     if (x>=0 && y>=0){
@@ -43,22 +43,46 @@ public class DriveBase extends SubsystemBase {
     angle=180-angle;
     }
     return angle;
-  }  */
+  } 
 
-  @Override
-  public void periodic() {
+  private double calculateMagnitude(double x, double y) {
+    return Math.sqrt(x*x+y*y);
+  }
+
+  public void drive1(){
     double LX = RobotContainer.xbox.getLeftX();
     double LY = RobotContainer.xbox.getLeftY();
     double ZR = RobotContainer.xbox.getRightX();
 
-    // double angle = calculateAngle(LX, LY);
-    // mecanumDrive.driveCartesian(LX, LY, ZR, angle);
+    double angle = calculateAngle(LX, LY);
+    double magnitude = calculateMagnitude(LX, LY);
+
+    if (RobotContainer.xbox.getLeftTriggerAxis() != 0 | RobotContainer.xbox.getLeftBumperPressed()) {
+      mecanumDrive.drivePolar(magnitude*0.8, angle, ZR);
+    } else {
+      mecanumDrive.drivePolar(magnitude*0.6, angle, ZR);
+    }
+    
+  }
+
+  public void drive2(){
+    double LX = RobotContainer.xbox.getLeftX();
+    double LY = RobotContainer.xbox.getLeftY();
+    double ZR = RobotContainer.xbox.getRightX();
 
     if (RobotContainer.xbox.getLeftTriggerAxis() != 0 | RobotContainer.xbox.getLeftBumperPressed()) {
       mecanumDrive.driveCartesian(LX*0.8, LY*0.8, ZR);
     } else {
       mecanumDrive.driveCartesian(LX*0.6, LY*0.6, ZR);
     }
+  }
+
+  @Override
+  public void periodic() {
+    
+    drive1();
+    // drive2();
+    
     // This method will be called once per scheduler run
   }
 }
